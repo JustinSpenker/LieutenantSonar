@@ -8,6 +8,7 @@ win = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Dot Game")
 
 counterfont = pygame.font.SysFont('comicsans', 128, True, True)
+timeAllowance = 8.25
 
 class dotParent(object):
 
@@ -18,7 +19,10 @@ class dotParent(object):
 
 dot = dotParent(random.randint(1, 1280), random.randint(0, 720), 20)
 counter = 10
-miliseconds = 3.25*1000
+miliseconds = 8.25*1000
+startOver = "Start Over!"
+StartOverText = counterfont.render(startOver, 1, (255, 255, 255))
+trueTimePast = pygame.time.get_ticks()
 
 while True:
 
@@ -46,20 +50,26 @@ while True:
     #     win.fill((0, 0, 0))
 
 
-    aMiliseconds = miliseconds - pygame.time.get_ticks()
+    aMiliseconds = miliseconds - (pygame.time.get_ticks() - trueTimePast)
     seconds = round((aMiliseconds / 1000), 2)
     secondsText = counterfont.render('' + str(seconds), 1, (255, 255, 255))
     win.blit(secondsText, (100, 10))
 
     pygame.display.update()
-    win.fill((0, 0, 0))
+
     if seconds == 0:
-        StartOverText = counterfont.render(("Time ran out Start over"), 1, (255, 255, 255))
-        win.blit(StartOverText, (200, 480))
+        timeAllowance += 1
+        win.fill((0, 0, 0))
+        win.blit(StartOverText, (100, 480))
+        pygame.display.update()
         pygame.time.wait(1000)
-        miliseconds = 11*1000
+        miliseconds = timeAllowance * 1000
+        trueTimePast = pygame.time.get_ticks()
         counter = 10
         pygame.draw.circle(win, (255, 0, 0), (dot.x, dot.y), dot.radius)
+
+    pygame.display.update()
+    win.fill((0, 0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
